@@ -53,43 +53,6 @@
                  y (range -1 2)
                  :when (not (and (zero? x) (zero? y)))] [x y]))
 
-(defn spiral-next [square
-                   [x y]
-                   direction
-                   step-counter
-                   step
-                   turn-counter
-                   threshold]
-  (let [neibors (for [pos sides] (get-in square
-                                         (map + [x y] pos)))
-        sum-neibors (apply + (filter some? neibors))
-        cur-direction (get directions direction)
-        [nx ny] (->> cur-direction (map + [x y]))
-        step-counter (inc step-counter)]
-    (if (> sum-neibors threshold)
-      [square sum-neibors]
-      (recur
-       (assoc-in square [x y] sum-neibors)
-       [nx ny]
-       direction
-       step
-       counter
-       threshold))))
-
-
-(spiral-next [[0 0 0]
-              [0 1 0]
-              [0 0 0]] [1 2] 1 1 1 15)
-
-
-(spiral-next [[0 0 0 0 0 0 0]
-              [0 0 0 0 0 0 0]
-              [0 0 0 0 0 0 0]
-              [0 0 0 1 0 0 0]
-              [0 0 0 0 0 0 0]
-              [0 0 0 0 0 0 0]
-              [0 0 0 0 0 0 0]] [3 4] 1 1 1 15)
-
 (defn passphrase [passes]
   (let [splitted (map #(str/split % #" ") passes)
         sets (map set splitted)]
@@ -239,8 +202,6 @@
 
 (defn traverse-path [pos edge]
   (map + pos (steps edge)))
-
-(reduce (comp doall traverse-path) [0 0] input-path)
 
 (reduce (comp doall traverse-path) [0 0] ["ne" "ne" "s" "s"])
 
