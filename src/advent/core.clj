@@ -47,11 +47,33 @@
         y (abs (- abs-y one-y))]
     [x y]))
 
-(def directions [[0 1] [-1 0] [0 -1] [1 0]])
+(def directions [[1 0]
+                 [0 1]
+                 [-1 0]
+                 [0 -1]])
 
-(def sides (for [x (range -1 2)
-                 y (range -1 2)
-                 :when (not (and (zero? x) (zero? y)))] [x y]))
+
+
+(defn spiral-next [[coords direction visited]]
+  (let [look-left   (-> (inc direction)
+                        (mod 4)
+                        directions
+                        (#(map + coords %)))
+        next-direction (if (visited look-left)
+                         direction
+                         (-> (inc direction) (mod 4)))
+        next-coords (map + coords (directions next-direction))
+        dxy (for [dx (range -1 2)
+                  dy (range -1 2) :when (not (and (zero? dx)
+                                                  (zero? dy)))] [dx dy])
+        neibour-sum (->> (repeat coords)
+                         (map #(map + %1 %2) dxy)
+                         (map visited)
+                         (filter some?)
+                         (apply +))]
+    [next-coords next-direction (assoc visited coords neibour-sum)]))
+
+
 
 (defn passphrase [passes]
   (let [splitted (map #(str/split % #" ") passes)
