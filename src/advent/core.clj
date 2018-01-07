@@ -74,7 +74,6 @@
     [next-coords next-direction (assoc visited coords neibour-sum)]))
 
 
-
 (defn passphrase [passes]
   (let [splitted (map #(str/split % #" ") passes)
         sets (map set splitted)]
@@ -82,6 +81,16 @@
               (if (= (count orig) (count as-set)) (inc sum) sum))
             0
             (map list splitted sets))))
+
+
+(defn passphrase-2 [passes]
+  (let [splitted (map #(map set (str/split % #" ")) passes)
+        sets (map set splitted)]
+    (reduce (fn [sum [orig as-set]]
+              (if (= (count orig) (count as-set)) (inc sum) sum))
+            0
+            (map list splitted sets))))
+
 
 (defn cpu-maze
   ([a] (cpu-maze a 0 0))
