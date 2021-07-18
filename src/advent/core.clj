@@ -52,8 +52,6 @@
                  [-1 0]
                  [0 -1]])
 
-
-
 (defn spiral-next [[coords direction visited]]
   (let [look-left   (-> (inc direction)
                         (mod 4)
@@ -92,13 +90,14 @@
             (map list splitted sets))))
 
 
+
 (defn cpu-maze
   ([a] (cpu-maze a 0 0))
   ([a x jumps-total]
    (let [jump (nth a x)
          jump-to (+ x jump)
          a (concat (take x a)
-                   [(inc jump)]
+                   [(if (>= jump 3) (dec jump) (inc jump))]
                    (nthrest a (inc x)))
          jumps-total (inc jumps-total)]
      (if (and (>= jump-to 0)
@@ -107,7 +106,7 @@
        jumps-total))))
 
 (defn redist
-  ([banks] (redist banks #{banks} 0))
+  ([banks] (redist banks {banks 0} 0))
   ([banks visited res]
    (let [cur-max (apply max banks)
          banks-idx (map-indexed vector banks)
@@ -124,8 +123,10 @@
                                      cur-idx
                                      (inc (cur-banks cur-idx))))))]
      (if (visited new-banks)
-       (inc res)
-       (recur new-banks (conj visited banks) (inc res))))))
+       (- (inc res) (get visited new-banks))
+       (recur new-banks (assoc visited banks res) (inc res))))))
+
+(def inp [4	10	4	1	8	4	9	14	5	1	14	15	0	15	3	5])
 
 (defn parse-edges [row]
   (when-let [[_ from to] (re-find #"([a-z]+) \(\d+\) -> ((?:[a-z]+(?:, )?)+)" row)]
@@ -141,6 +142,18 @@
                             (set))
         result-set (difference candidates not-candidates)]
     (first result-set)))
+
+(defn unbalanced
+  ([edges] (unbalanced (into {} edges)
+                       (bottom edges)))
+  ([edges x]
+   (let [children (get edges x)]
+     (if (nil? children)
+       [(second x) false]
+       (let [child-unbalanced (map #(unbalanced edges %) children)
+             unbalanced? (apply = (map first child-unbalanced))
+             ]
+         (if (not balanced?) []))))))
 
 (defn parse-instruction [instr]
   (when-let [[_ reg op op-val if-reg if-op if-val]
