@@ -1,4 +1,4 @@
-(ns advent.core
+(ns advent.tasks-2017
   (:gen-class)
   (:require [clojure.string :as str]
             [clojure.set :refer [difference]]
