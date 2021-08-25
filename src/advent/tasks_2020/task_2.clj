@@ -7,14 +7,12 @@
        (filter true?)
        (count)))
 
-(task-2 input-v2)
-
 
 (defn count-char [stack needle]
-(->> (for [ch stack]
-       (= ch needle))
-     (filter true?)
-     count))
+  (->> (for [ch stack]
+         (= ch needle))
+       (filter true?)
+       count))
 
 (defn is-valid-v2 [{min-val :min
                     max-val :max
